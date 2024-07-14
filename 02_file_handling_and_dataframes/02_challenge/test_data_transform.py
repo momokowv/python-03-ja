@@ -33,11 +33,13 @@ class TestReadJson(unittest.TestCase):
         result = read_json('sample.json')
         self.assertIsInstance(result, list)
 
+
 class TestJsonToCsv(unittest.TestCase):
     def test_valid_json_to_csv(self):
         json_data = [{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]
         result = json_to_csv(json_data)
         self.assertIsInstance(result, str)
+
 
 class TestWriteCsv(unittest.TestCase):
     def test_write_csv(self):

@@ -9,8 +9,12 @@ def read_csv(file_path):
     :引数 file_path: 文字列 - CSVファイルへのパス
     :戻り値: リスト - CSVの列を表す辞書のリスト
     """
-    # ここに実装してください
-    pass
+    data = []
+    with open(file_path, 'r', newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data.append(row)
+    return data
 
 def csv_to_json(csv_data):
     """
@@ -19,8 +23,7 @@ def csv_to_json(csv_data):
     :引数 csv_data: リスト - 辞書のリストで表したCSVデータ
     :戻り値: 文字列 - JSON形式で表したデータ
     """
-    # ここに実装してください
-    pass
+    return json.dumps(csv_data, indent=4)
 
 def write_json(json_data, file_path):
     """
@@ -29,8 +32,8 @@ def write_json(json_data, file_path):
     :param json_data: 文字列 - 書き込むJSONデータ
     :param file_path: 文字列 - JSONファイルへのパス
     """
-    # ここに実装してください
-    pass
+    with open(file_path, 'w', encoding='utf-8') as jsonfile:
+        jsonfile.write(json_data)
 
 def read_json(file_path):
     """
@@ -39,8 +42,9 @@ def read_json(file_path):
     :引数 file_path: 文字列 - JSONファイルへのパス
     :戻り値: JSONファイルの内容
     """
-    # ここに実装してください
-    pass
+    with open(file_path, 'r', encoding='utf-8') as jsonfile:
+        data = json.load(jsonfile)
+    return data
 
 def json_to_csv(json_data):
     """
@@ -49,8 +53,15 @@ def json_to_csv(json_data):
     :引数 json_data: JSONデータ
     :戻り値: 文字列 - CSV形式で表したデータ
     """
-    # ここに実装してください
-    pass
+    if len(json_data) == 0:
+        return""
+    
+    csv_data=[]
+    fieldnames = list(json_data[0].keys())
+    csv_data.append(fieldnames)
+    for entry in json_data:
+        csv_data.append(list(entry.values()))
+    return csv_data
 
 def write_csv(csv_data, file_path):
     """
@@ -59,8 +70,10 @@ def write_csv(csv_data, file_path):
     :引数 csv_data: 文字列 - 書き込むCSVデータ
     :引数 file_path: 文字列 - CSVファイルへのパス
     """
-    # ここに実装してください
-    pass
+    with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in csv_data:
+            writer.writerow(row)
 
 def validate_data(data, data_type):
     """
@@ -70,8 +83,14 @@ def validate_data(data, data_type):
     :引数 data_type: 文字列 - データ型 ('CSV' または 'JSON')
     :戻り値: bool - データが有効な場合はTrue、無効な場合はFalse
     """
-    # ここに実装してください
-    pass
+    if data_type =='csv':
+        num_columns = len(data[0].keys())
+        for row in data:
+            if len(row.keys()) != num_columns:
+                return False
+    elif data_type == 'json':
+        pass
+    return True
 
 def process_directory(directory_path):
     """
@@ -79,14 +98,32 @@ def process_directory(directory_path):
 
     :引数 directory_path: 文字列 - 処理対象のディレクトリへのパス
     """
-    # ここに実装してください
-    pass
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)
+        if filename.endswith('.csv'):
+            csv_data = read_csv(file_path)
+            json_data = csv_to_json(csv_data)
+            json_file_path = os.path.splitext(file_path)[0] + '.json'
+            write_json(json_data, json_file_path)
+        
+        elif filename.endswith('.json'):
+            json_data = read_json(file_path)
+            csv_data = json_to_csv(json_data)
+            csv_file_path = os.path.splitext(file_path)[0] + '.csv'
+            write_csv(csv_data,csv_file_path)
+        
+        else:
+            print(f"Unsupported file format: {filename}")
+
 
 # スクリプトを実行するmain関数
 def main():
     # 使用例
+    
+    print("現在地:{}".format(os.getcwd()))
+    
     try:
-        directory = "path_to_directory"
+        directory = os.getcwd()
         process_directory(directory)
     except Exception as e:
         print("An error occurred:", e)
