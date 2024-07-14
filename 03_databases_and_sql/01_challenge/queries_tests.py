@@ -6,6 +6,7 @@ from queries import *
 conn = sqlite3.connect('../data/chinook.db')
 db = conn.cursor()
 
+
 # number_of_artistsのテスト
 def test_number_of_artists():
     assert number_of_artists(db) > 0, "The number of artists should be greater than 0."
@@ -22,7 +23,7 @@ def test_albums_about_love():
     assert isinstance(albums, list), "Should return a list."
     for album in albums:
         assert 'love' in album.lower(), "Each album title should contain 'love'."
-
+        
 # tracks_longer_thanのテスト
 def test_tracks_longer_than():
     duration = 200000  # 200 seconds
